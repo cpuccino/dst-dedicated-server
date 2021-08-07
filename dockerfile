@@ -8,14 +8,23 @@ LABEL \
     resources="https://steamcommunity.com/id/ToNiO44/myworkshopfiles/?section=guides&appid=322330"
 
 # Don't Starve Together Dedicated Server App ID https://steamdb.info/app/343050/
-ARG STEAM_APP_ID="343050"
+ARG APP_ID
+ENV APP_ID=${STEAM_APP_ID:-"343050"}
 
-# Create a user that manages the server
+ARG ADMIN_NAME
+ENV ADMIN_NAME=${ADMIN_NAME:-"admin_dst"}
 
-# Install the required packages
+ARG SERVER_DIR
+ENV SERVER_DIR=${SERVER_DIR:-"server_dst"}
 
-# Create directories for the base game, mods, and save data
+RUN useradd -ms /bin/bash/ ${ADMIN_NAME}
+WORKDIR /home/${ADMIN_NAME}
+USER ${ADMIN_NAME}
 
-# Install the base game via steamcmd
+RUN ./scripts/requirements.sh
 
-# Add volumes for base game, mods and save data
+# Create directories for the base game, mods, save data and logs
+
+RUN ./scripts/steam.sh
+
+# Add volumes for base game, mods, save data and logs
