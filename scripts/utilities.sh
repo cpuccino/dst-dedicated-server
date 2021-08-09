@@ -1,4 +1,7 @@
 #!/usr/bin/env bash
+#/ Usage: source "path/to/utilities.sh"
+#/
+#/ Description: This is just a utility to be sourced in other scripts
 
 is_integer() {
     local pattern='^[0-9]+$'
@@ -33,7 +36,7 @@ is_bool() {
 
 valid_or_exit() {
     if [[ "$1" = 'false' ]]; then
-        echo "not valid"
+        echo "$2 - Not valid"
         exit 1
     fi
     
