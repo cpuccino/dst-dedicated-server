@@ -1,8 +1,13 @@
 #!/usr/bin/env bash
-#/ Usage: cluster.sh cluster/config/path
+#/ Usage: cluster.sh [options] [--] [<shell-script>...]
+#/
+#/     -p, --path            cluster path
+#/
+#/ Description: Updates the cluster key and cluster token in the directory
 
 function set_cluster_key() {
     local cluster_config_path="$1/cluster.ini"
+
     if [[ ! -f cluster_config_path ]]
         echo "Configuration cluster.ini required"
         exit 1
@@ -26,5 +31,30 @@ function set_cluster_token() {
     echo cluster_token > cluster_token_path
 }
 
-set_cluster_key $1
-set_cluster_token $1
+function run() {
+    local path
+
+    while [[ $# -gt 0 ]]; do
+        local key=$1
+
+        case "$key" in
+            -p|--path)
+                path=$2
+                shift; shift;
+            ;;
+            *)
+            shift
+            ;;
+        esac
+    done
+
+    if [[ -z path ]]
+        echo 'Cluster config path is required'
+        exit 1
+    fi
+
+    set_cluster_key path
+    set_cluster_token path
+}
+
+run
