@@ -29,11 +29,11 @@ function run() {
 
         case "$key" in
             -a|--app-id)
-                app_id=$2
+                app_id="$2"
                 shift; shift;
             ;;
             -d|--dir|--install-dir)
-                install_dir=$2
+                install_dir="$2"
                 shift; shift;
             *)
             shift
@@ -41,7 +41,7 @@ function run() {
         esac
     done
 
-    if [[ -z app_id ]] || [[ -z install_dir ]]
+    if [[ -z app_id ]] || [[ -z install_dir ]]; then
         echo 'App id and install directory are required'
         exit 1
     fi
