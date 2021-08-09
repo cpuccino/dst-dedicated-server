@@ -1,0 +1,2 @@
+~ initialize this using cluster.sh
+~ cluster token can be generated from https://accounts.klei.com/account/game/config?game=DontStarveTogether
