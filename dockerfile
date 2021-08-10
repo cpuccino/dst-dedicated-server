@@ -1,30 +1,48 @@
-FROM debian:latest
+FROM ubuntu:20.04
 
 LABEL \
-    author="cpuccino" \
-    email="thegreatcappuccino@gmail.com" \
-    description="Don't Starve Together Dedicated Server" \
-    source="https://github.com/cpuccino/dst-dedicated-server" \
-    resources="https://steamcommunity.com/id/ToNiO44/myworkshopfiles/?section=guides&appid=322330"
+    author='cpuccino' \
+    email='thegreatcappuccino@gmail.com' \
+    description='Don\'t Starve Together Dedicated Server' \
+    source='https://github.com/cpuccino/dst-dedicated-server' \
+    resources='https://steamcommunity.com/id/ToNiO44/myworkshopfiles/?section=guides&appid=322330'
 
-# Don't Starve Together Dedicated Server App ID https://steamdb.info/app/343050/
+# Master server port
+EXPOSE 10998
+# Caves server port
+EXPOSE 10999
+# Master steam server port
+EXPOSE 27018
+# Caves steam server port
+EXPOSE 27019
+# Master steam authentication port
+EXPOSE 8768
+# Caves steam authentication port
+EXPOSE 8769
+
+ARG ADMIN_NAME='dontstarvetogether'
+# https://steamdb.info/app/343050/
 ARG APP_ID
-ENV APP_ID=${STEAM_APP_ID:-"343050"}
+ENV APP_ID=${APP_ID:-'343050'}
 
-ARG ADMIN_NAME
-ENV ADMIN_NAME=${ADMIN_NAME:-"admin_dst"}
+# Create admin user directory
+RUN useradd -ms /bin/bash/ $ADMIN_NAME
 
-ARG SERVER_DIR
-ENV SERVER_DIR=${SERVER_DIR:-"server_dst"}
+# Set up volumes in user directory
+RUN set -x && \
+    chown -R $ADMIN_NAME:$ADMIN_NAME
 
-RUN useradd -ms /bin/bash/ ${ADMIN_NAME}
-WORKDIR /home/${ADMIN_NAME}
-USER ${ADMIN_NAME}
+USER $ADMIN_NAME
 
-RUN ./scripts/requirements.sh
+WORKDIR /home/$ADMIN_NAME
+RUN mkdir -p /home/$ADMIN_NAME/server /home/$ADMIN_NAME/scripts
 
-# Create directories for the base game, mods, save data and logs
+# Update steam
+RUN ./scripts/steam.sh -a $APP_ID -d /home/$ADMIN_NAME/server
 
-RUN ./scripts/steam.sh
+# Configure volumes
+VOLUME ['/home/$ADMIN_NAME/server']
 
-# Add volumes for base game, mods, save data and logs
+COPY ['./scripts/steam.sh', './scripts/entrypoint.sh', './scripts/cluster.sh' '/home/$ADMIN_NAME/scripts/']
+
+ENTRYPOINT ['home/$ADMIN_NAME/scripts/entrypoint.sh']

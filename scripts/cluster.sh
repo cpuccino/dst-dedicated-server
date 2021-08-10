@@ -73,9 +73,9 @@ function run() {
 
     set_cluster_token path
     set_cluster_field path 'cluster_key' $(uuidgen)
-    set_cluster_field path 'cluster_name' cluster_name
-    set_cluster_field path 'cluster_description' cluster_description
-    set_cluster_field path 'cluster_password' cluster_password
+    set_cluster_field path 'cluster_name' "$cluster_name"
+    set_cluster_field path 'cluster_description' "$cluster_description"
+    set_cluster_field path 'cluster_password' "$cluster_password"
 }
 
 run

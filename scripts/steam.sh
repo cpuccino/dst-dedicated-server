@@ -46,7 +46,7 @@ function run() {
         exit 1
     fi
 
-    update_app install_dir app_id
+    update_app "$install_dir" "$app_id"
 }
 
 run
